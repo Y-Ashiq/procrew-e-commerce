@@ -12,7 +12,6 @@ orderRouter.post(
   orderController.createOrder
 );
 
-
 orderRouter.post(
   "/stripePay/:id",
   protectedRoutes,
@@ -20,7 +19,10 @@ orderRouter.post(
   orderController.payWithStripe
 );
 
-
+orderRouter.get(
+  "/exportcsv",
+  orderController.exportCSV
+);
 
 orderRouter.post(
   "/orderStatus",

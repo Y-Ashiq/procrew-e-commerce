@@ -20,6 +20,8 @@ const productSchema = sequelize.define("products", {
   },
   price: {
     type: DataTypes.INTEGER,
+    allowNull: false,
+
   },
   createdAt: {
     type: DataTypes.DATE,

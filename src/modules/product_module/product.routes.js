@@ -11,7 +11,15 @@ productRouter.post(
   "/",
   protectedRoutes,
   allowTo("admin"),
+
   productController.addProduct
+);
+productRouter.post(
+  "/bulkImport",
+  protectedRoutes,
+  allowTo("admin"),
+
+  productController.bulkAddProduct
 );
 
 productRouter

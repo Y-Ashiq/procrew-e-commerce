@@ -9,11 +9,35 @@ const addProduct = handleError(async (req, res, next) => {
 
   let isExist = await productSchema.findOne({ where: { name } });
 
-  if (isExist) return next(new AppError("this product is already exist", 409));
+  if (!isExist) return next(new AppError("this product is already exist", 409));
 
-  await productSchema.create({ name });
+  await productSchema.create(req.body);
 
   res.json({ message: "product created successfully" });
+});
+
+const bulkAddProduct = handleError(async (req, res, next) => {
+  const Req_names = req.body.products;
+
+  const products = Req_names.map((names) => names.name);
+
+  let isExist = await productSchema.findAll({
+    where: {
+      name: {
+        [Op.in]: products,
+      },
+    },
+  });
+
+  let result = isExist.map((names) => names.dataValues.name);
+
+  if (result.length > 0) {
+    return next(new AppError(`this products are already exist ,${result}`, 409));
+  } else {
+
+    await productSchema.bulkCreate(req.body.products)
+    res.json({ message: "product created successfully" });
+  }
 });
 
 //
@@ -47,6 +71,8 @@ const deleteProduct = handleError(async (req, res, next) => {
     res.status(200).json({ message: "product deleted successfully" });
   }
 });
+
+
 
 const getAllProduct = handleError(async (req, res, next) => {
   const { category, minPrice, maxPrice, available } = req.query;
@@ -89,4 +115,10 @@ const getAllProduct = handleError(async (req, res, next) => {
   }
 });
 
-export default { addProduct, updateProduct, deleteProduct, getAllProduct };
+export default {
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProduct,
+  bulkAddProduct,
+};
