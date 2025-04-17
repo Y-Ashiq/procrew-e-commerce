@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('ecommerce', 'postgres', 'admin', {
-  host: 'localhost',
+const sequelize = new Sequelize('ecommerce', 'postgres', 'postgres', {
+  host: 'postgres-db',
   dialect: 'postgres',  
   logging: false,       
 });

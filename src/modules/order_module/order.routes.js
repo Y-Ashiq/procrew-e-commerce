@@ -21,6 +21,7 @@ orderRouter.post(
 
 orderRouter.get(
   "/exportcsv",
+  protectedRoutes,allowTo("admin"),
   orderController.exportCSV
 );
 

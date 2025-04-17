@@ -2,7 +2,7 @@ import { handleError } from "../../middleware/handleError.js";
 import { AppError } from "../../util/AppError.js";
 import jwt from 'jsonwebtoken'
 import userSchema from "../../../database/models/users.model.js";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 
 const register = handleError(async (req, res, next) => {
   let { email, password, role } = req.body;
