@@ -32,16 +32,13 @@ orderRouter.get(
   orderController.exportCSV
 );
 
-orderRouter.post(
-  "/orderStatus",
+orderRouter.put(
+  "/orderStatus/:id",
   protectedRoutes,
   allowTo("admin"),
   orderController.changeOrderStatus
 );
 
-orderRouter.post(
-  "/webhook",
-  orderController.webHook
-);
+orderRouter.post("/webhook", orderController.webHook);
 
 export default orderRouter;

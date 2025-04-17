@@ -8,15 +8,16 @@ import { AppError } from "./src/util/AppError.js";
 
 import { BootStrap } from "./src/util/bootstrap.js";
 import 'dotenv/config';
+import { apiLimiter } from "./src/middleware/rateLimiter.js";
 
 
-
-export const app = express();
+const app = express();
 const port = 3000;
 
 sequelize.sync();
 
 app.use(express.json());
+app.use(apiLimiter)
 
 /**
  bootstrap for routing */

@@ -42,12 +42,15 @@ const createOrder = handleError(async (req, res, next) => {
 
   req.body.totalAmount = totalPrice;
 
+  req.body.userId = req.user.dataValues.id;
+
   await orderSchema.create(req.body);
   res.json({ message: "Order created successfully" });
 });
 
 const changeOrderStatus = handleError(async (req, res, next) => {
-  let { orderId, email, status } = req.body;
+  let { email, status } = req.body;
+  let orderId = req.params.id;
 
   await orderSchema.update({ status }, { where: { id: orderId } });
 
@@ -86,12 +89,11 @@ const payWithStripe = handleError(async (req, res, next) => {
       total: product.price * cartItem.quantity,
     };
   });
-  combinedProducts.ordeId=order.dataValues.id
-  
+  combinedProducts.ordeId = order.dataValues.id;
 
   const paymentObject = {
     customer_email: req.user.email,
-    metadata: {orderID :combinedProducts.ordeId},
+    metadata: { orderID: combinedProducts.ordeId },
 
     line_items: combinedProducts.map((item) => {
       return {
@@ -106,30 +108,21 @@ const payWithStripe = handleError(async (req, res, next) => {
       };
     }),
   };
-  
-  const checkOutSession = await createCheckoutSession(paymentObject);
 
+  const checkOutSession = await createCheckoutSession(paymentObject);
 
   res.json({ checkOutSession });
 });
 
-
-
-
-
 const webHook = handleError(async (req, res, next) => {
-  const orderId =req.body.data.object.metadata.orderID*1
+  const orderId = req.body.data.object.metadata.orderID * 1;
 
   await orderSchema.update(
-    { status: "processing" ,paid:true },
-    { where: { id: 20 } }
+    { status: "processing", paid: true },
+    { where: { id: orderId } }
   );
 
-
-
-  
-  res.status(200).json({message:"webhook recieved"})
-
+  res.status(200).json({ message: "webhook recieved" });
 });
 const exportCSV = handleError(async (req, res, next) => {
   let isExist = await orderSchema.findAll();
@@ -147,15 +140,13 @@ const exportCSV = handleError(async (req, res, next) => {
 const trackOrder = handleError(async (req, res, next) => {
   const id = req.params.id;
 
-  console.log(req.user);
-
   let isExist = await orderSchema.findOne({
     where: { id },
-    attributes: ["id", "cartItems", "status", "user_id"],
+    attributes: ["id", "cartItems", "status", "user_id", "totalAmount"],
   });
 
   if (!isExist) return next(new AppError("no records", 409));
-  if (req.user.id !== isExist.user_id) {
+  if (req.user.dataValues.id !== isExist.dataValues.user_id) {
     return next(new AppError("no records to show", 409));
   } else {
     res.json({ satuts: isExist });
@@ -168,5 +159,5 @@ export default {
   payWithStripe,
   exportCSV,
   trackOrder,
-  webHook
+  webHook,
 };

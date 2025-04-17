@@ -2,6 +2,8 @@ import { Router } from "express";
 import productController from "./product.controller.js";
 import { protectedRoutes } from "../../middleware/protectedRoutes.js";
 import { allowTo } from "../../middleware/allowTo.js";
+import { prodcutValidation } from "./product.validation.js";
+import { validation } from "../../middleware/validate.js";
 
 const productRouter = Router();
 
@@ -11,6 +13,7 @@ productRouter.post(
   "/",
   protectedRoutes,
   allowTo("admin"),
+  validation(prodcutValidation),
 
   productController.addProduct
 );

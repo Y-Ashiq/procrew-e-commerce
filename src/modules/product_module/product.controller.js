@@ -2,14 +2,14 @@ import { handleError } from "../../middleware/handleError.js";
 import { AppError } from "../../util/AppError.js";
 import productSchema from "../../../database/models/product.model.js";
 import { Op } from "sequelize";
-// import redis from "../../util/caching.js";
+import redis from "../../util/caching.js";
 
 const addProduct = handleError(async (req, res, next) => {
   let { name } = req.body;
 
   let isExist = await productSchema.findOne({ where: { name } });
 
-  if (!isExist) return next(new AppError("this product is already exist", 409));
+  if (isExist) return next(new AppError("this product is already exist", 409));
 
   await productSchema.create(req.body);
 
@@ -102,7 +102,7 @@ const getAllProduct = handleError(async (req, res, next) => {
   let cache = await redis.get("products");
 
   if (!cache) {
-    let products = await productSchema.find(filter);
+    let products = await productSchema.findAll(filter);
     await redis.setex("products", 10, JSON.stringify(products));
 
     if (!products) {
