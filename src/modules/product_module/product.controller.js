@@ -4,6 +4,9 @@ import productSchema from "../../../database/models/product.model.js";
 import { Op } from "sequelize";
 import redis from "../../util/caching.js";
 
+
+//========================== add one product =============================//
+
 const addProduct = handleError(async (req, res, next) => {
   let { name } = req.body;
 
@@ -15,6 +18,9 @@ const addProduct = handleError(async (req, res, next) => {
 
   res.json({ message: "product created successfully" });
 });
+
+
+//========================== add multibles of products  =============================//
 
 const bulkAddProduct = handleError(async (req, res, next) => {
   const Req_names = req.body.products;
@@ -40,7 +46,7 @@ const bulkAddProduct = handleError(async (req, res, next) => {
   }
 });
 
-//
+//========================== update product info =============================//
 
 const updateProduct = handleError(async (req, res, next) => {
   const id = req.params.id;
@@ -58,6 +64,8 @@ const updateProduct = handleError(async (req, res, next) => {
   }
 });
 
+//========================== delete product =============================//
+
 const deleteProduct = handleError(async (req, res, next) => {
   const id = req.params.id;
 
@@ -72,6 +80,7 @@ const deleteProduct = handleError(async (req, res, next) => {
   }
 });
 
+//========================== display all products =============================//
 
 
 const getAllProduct = handleError(async (req, res, next) => {
@@ -102,8 +111,8 @@ const getAllProduct = handleError(async (req, res, next) => {
   let cache = await redis.get("products");
 
   if (!cache) {
-    let products = await productSchema.findAll(filter);
-    await redis.setex("products", 10, JSON.stringify(products));
+    let products = await productSchema.findAll({where:filter});
+    await redis.setex("products", 5, JSON.stringify(products));
 
     if (!products) {
       return next(new AppError("no records", 404));

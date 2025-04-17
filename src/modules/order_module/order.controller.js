@@ -7,6 +7,7 @@ import { createCheckoutSession } from "../../payment/stripe.js";
 import { Parser } from "json2csv";
 import { Op } from "sequelize";
 
+//========================== function to calcultae the total price =============================//
 function calculateTotal(items, cartItems) {
   let totalPrice = 0;
 
@@ -18,6 +19,8 @@ function calculateTotal(items, cartItems) {
 
   return totalPrice;
 }
+
+//========================== create user order =============================//
 
 const createOrder = handleError(async (req, res, next) => {
   const productIds = req.body.cartItems;
@@ -48,16 +51,20 @@ const createOrder = handleError(async (req, res, next) => {
   res.json({ message: "Order created successfully" });
 });
 
+//========================== change order status by Admins =============================//
+
 const changeOrderStatus = handleError(async (req, res, next) => {
   let { email, status } = req.body;
   let orderId = req.params.id;
 
   await orderSchema.update({ status }, { where: { id: orderId } });
 
-  sendOrderStatusEmail({ to: email, orderId, status });
+  sendOrderStatusEmail({ to: email, orderId, status }); //(nodemailer) this function used to send email notification to user when the status is chnaged
 
   res.json({ message: "Status changed successfully" });
 });
+
+//========================== Stripe Payment =============================//
 
 const payWithStripe = handleError(async (req, res, next) => {
   let orderId = req.params.id;
@@ -114,6 +121,8 @@ const payWithStripe = handleError(async (req, res, next) => {
   res.json({ checkOutSession });
 });
 
+//========================== Stripe webhook to track the events (session completed) =============================//
+
 const webHook = handleError(async (req, res, next) => {
   const orderId = req.body.data.object.metadata.orderID * 1;
 
@@ -124,6 +133,9 @@ const webHook = handleError(async (req, res, next) => {
 
   res.status(200).json({ message: "webhook recieved" });
 });
+
+//========================== export orders data in CSV for Admins =============================//
+
 const exportCSV = handleError(async (req, res, next) => {
   let isExist = await orderSchema.findAll();
 
@@ -136,6 +148,8 @@ const exportCSV = handleError(async (req, res, next) => {
   res.attachment("orders.csv");
   res.send(csv);
 });
+
+//========================== users track their order =============================//
 
 const trackOrder = handleError(async (req, res, next) => {
   const id = req.params.id;
@@ -153,6 +167,14 @@ const trackOrder = handleError(async (req, res, next) => {
   }
 });
 
+const orderHistory = handleError(async (req, res, next) => {
+  let isExist = await orderSchema.findAll({
+    where: { user_id: req.user.dataValues.id },
+  });
+  if (!isExist) return next(new AppError("no records", 409));
+  res.json({ order_History: isExist });
+});
+
 export default {
   createOrder,
   changeOrderStatus,
@@ -160,4 +182,5 @@ export default {
   exportCSV,
   trackOrder,
   webHook,
+  orderHistory
 };
