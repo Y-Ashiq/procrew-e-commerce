@@ -37,8 +37,8 @@ const createOrder = handleError(async (req, res, next) => {
 
   let result = isExist.map((IDs) => IDs.dataValues);
 
-  if (result.length == 0) {
-    return next(new AppError(`this products are not exist ,${result}`, 409));
+  if (result.length < req.body.cartItems.length) {
+    return next(new AppError(`these products are not exist ,`, 409));
   }
 
   let totalPrice = calculateTotal(result, req.body.cartItems);
@@ -182,5 +182,5 @@ export default {
   exportCSV,
   trackOrder,
   webHook,
-  orderHistory
+  orderHistory,
 };
