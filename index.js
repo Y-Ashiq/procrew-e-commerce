@@ -2,12 +2,12 @@ process.on("uncaughtException", (err) => {
   console.log("error in the code project", err);
 });
 
+import 'dotenv/config';
 import express from "express";
 import sequelize from "./database/DBconnection.js";
 import { AppError } from "./src/util/AppError.js";
 
 import { BootStrap } from "./src/util/bootstrap.js";
-import 'dotenv/config';
 import { apiLimiter } from "./src/middleware/rateLimiter.js";
 
 
