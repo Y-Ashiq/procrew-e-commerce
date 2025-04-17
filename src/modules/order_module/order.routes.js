@@ -27,7 +27,8 @@ orderRouter.post(
 
 orderRouter.get(
   "/exportcsv",
-  protectedRoutes,allowTo("admin"),
+  protectedRoutes,
+  allowTo("admin"),
   orderController.exportCSV
 );
 
@@ -36,6 +37,11 @@ orderRouter.post(
   protectedRoutes,
   allowTo("admin"),
   orderController.changeOrderStatus
+);
+
+orderRouter.post(
+  "/webhook",
+  orderController.webHook
 );
 
 export default orderRouter;

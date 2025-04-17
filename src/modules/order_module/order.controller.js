@@ -86,9 +86,13 @@ const payWithStripe = handleError(async (req, res, next) => {
       total: product.price * cartItem.quantity,
     };
   });
+  combinedProducts.ordeId=order.dataValues.id
+  
 
   const paymentObject = {
     customer_email: req.user.email,
+    metadata: {orderID :combinedProducts.ordeId},
+
     line_items: combinedProducts.map((item) => {
       return {
         price_data: {
@@ -104,14 +108,29 @@ const payWithStripe = handleError(async (req, res, next) => {
   };
   
   const checkOutSession = await createCheckoutSession(paymentObject);
-  await orderSchema.update(
-    { status: "processing" },
-    { where: { id: orderId } }
-  );
+
 
   res.json({ checkOutSession });
 });
 
+
+
+
+
+const webHook = handleError(async (req, res, next) => {
+  const orderId =req.body.data.object.metadata.orderID*1
+
+  await orderSchema.update(
+    { status: "processing" ,paid:true },
+    { where: { id: 20 } }
+  );
+
+
+
+  
+  res.status(200).json({message:"webhook recieved"})
+
+});
 const exportCSV = handleError(async (req, res, next) => {
   let isExist = await orderSchema.findAll();
 
@@ -149,4 +168,5 @@ export default {
   payWithStripe,
   exportCSV,
   trackOrder,
+  webHook
 };
