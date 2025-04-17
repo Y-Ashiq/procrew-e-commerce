@@ -12,7 +12,7 @@ export const protectedRoutes = handleError(async (req, res, next) => {
 
   let isExist = await userSchema.findOne({
     where: { id: decoded.id },
-    attributes: ["email", "role"],
+    attributes: ["email", "role",'id'],
   });
 
   if (!isExist) return next(new AppError("user not found", 404));

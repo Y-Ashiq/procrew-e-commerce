@@ -11,6 +11,12 @@ orderRouter.post(
   allowTo("customer"),
   orderController.createOrder
 );
+orderRouter.get(
+  "/trackOrder/:id",
+  protectedRoutes,
+  allowTo("customer"),
+  orderController.trackOrder
+);
 
 orderRouter.post(
   "/stripePay/:id",

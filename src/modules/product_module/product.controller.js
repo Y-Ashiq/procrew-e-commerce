@@ -2,7 +2,7 @@ import { handleError } from "../../middleware/handleError.js";
 import { AppError } from "../../util/AppError.js";
 import productSchema from "../../../database/models/product.model.js";
 import { Op } from "sequelize";
-import redis from "../../util/caching.js";
+// import redis from "../../util/caching.js";
 
 const addProduct = handleError(async (req, res, next) => {
   let { name } = req.body;
