@@ -85,3 +85,7 @@ For full API usage and available endpoints, check out the Postman documentation:
 
 ---
 
+## note
+
+The project may not function correctly if the .env file is not properly configured or if the Stripe secret key is missing. Ensure that you have created an .env file with the correct environment variables, including your Stripe test secret key, before running the application
+
