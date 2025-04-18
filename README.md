@@ -70,7 +70,6 @@ This will spin up containers for the app, database, and Redis cache.
 ##  API Documentation
 
 For full API usage and available endpoints, check out the Postman documentation:
-
  [Postman Docs](https://documenter.getpostman.com/view/17578628/2sB2cd4HhC)
 
 
