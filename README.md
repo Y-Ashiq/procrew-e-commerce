@@ -73,7 +73,17 @@ For full API usage and available endpoints, check out the Postman documentation:
 
  [Postman Docs](https://documenter.getpostman.com/view/17578628/2sB2cd4HhC)
 
-> **Note:** Due to deployment issues involving Redis and Stripe, a live API URL is not currently available.
+
+##  Live API
+
+https://procrew-e-commerce-production.up.railway.app/
+
+Replace localhost in Postman with this link  
+> **Note:** It's preferable to use localhost due to errors with strip and live API in the Checkout endpoint
+
+
+
+
 
 ---
 
